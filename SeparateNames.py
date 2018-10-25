@@ -231,7 +231,8 @@ def split_name(fullname: str, order: int = None):
     :param fullname:  the full name string to split into parts.
     :param order:  optionally, the order in which the full name is stated (-1 for surname first, and
     1 for name first).
-    :return:  a dictuonary of strings, detailing the name, first_surname and last_surname values.
+    :return:  a dictionary of strings, detailing the name, first_surname and last_surname values. Or
+    None if the script fails.
     """
     ns = NameSplitter(fullname, Order(order) if order is not None else None)
     ns.get_tokens()
