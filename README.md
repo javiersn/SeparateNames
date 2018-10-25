@@ -61,4 +61,5 @@ Important Notice on DataSets and Dictionaries
 The script uses name and surname dictionaries in order to identify and separate name. These dictionaries were obtained from publicly available datasets provided by the *U.S. Social Security (SSA)* and the *U.S. and the U.S. Census Bureau (USCENSUS)*. These datasets are not included in the License, and are subject to the policies, licenses and/or terms and conditions of their respective agencies. Please do review the terms and conditions in their respective websites:
 
   https://www.ssa.gov/oact/babynames/limits.html
+  
   https://www.census.gov/data/developers/data-sets/surnames.html
