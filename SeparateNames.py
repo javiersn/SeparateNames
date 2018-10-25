@@ -261,7 +261,7 @@ if __name__ == '__main__':
     if len(names) > 0:
         for n in names:
             if len(n) > 0:
-                print(split_name(n, force_order))   # TODO add other formats for output: CSV or Lists
+                print(split_name(n, force_order))   # TODO: add other formats for output: CSV or Lists
     else:
         print("""
     Usage:

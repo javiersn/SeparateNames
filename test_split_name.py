@@ -2,7 +2,7 @@ from unittest import TestCase
 from SeparateNames import split_name
 
 
-class TestSplitName(TestCase):
+class TestSplitName(TestCase):  # TODO: still need to add test cases for all class methods.
     test_cases = [
         ['Jorge Sánchez Fernández', 'Jorge', 'Sánchez', 'Fernández', None],
         ['Jorge Sánchez Fernández', 'Jorge', 'Sánchez', 'Fernández', 1],
