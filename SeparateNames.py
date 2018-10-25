@@ -195,7 +195,8 @@ class NameSplitter:
         Once the tokens have been assigned definitive TokenType, and an order has been infered or given, groups
         the tokens into first name, first surname, and second surname. Stores the grouped tokens as strings in-
         to the first_name, first_surname and second_surname properties respectively.
-        :return:  A dictionary of strings, detailing the name, first_surname and last_surname values.
+        :return:  A dictionary of strings, detailing the name, first_surname and last_surname values.  Or
+        None if the script fails.
         """
         types = [t.tktype for t in self.tokens]
         length = len(self.tokens)
