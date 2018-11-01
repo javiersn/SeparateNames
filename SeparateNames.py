@@ -1,7 +1,7 @@
 from sys import stdin, argv
 import pandas as pd   # TODO: replace pandas for simple file reading, and remove import
 from enum import Enum
-from typing import List, Dict
+from typing import List, Dict, Optional, Mapping
 from unidecode import unidecode
 
 
@@ -122,7 +122,7 @@ class NameSplitter:
         self.tokens = [t for t in tokens if not t.deleted]
         return self.tokens
 
-    def guess_order(self) -> Order:
+    def guess_order(self) -> Optional[Order]:
         """
         If an order wasn't previously assigned, deduces the most likely form or order of the full name (i.e.: 'name
         first' or 'surname first') and stores the enfered order into the order property.
@@ -147,7 +147,7 @@ class NameSplitter:
                     else:
                         self.order = Order.NS
 
-    def adjust_tokens(self):
+    def adjust_tokens(self) -> None:
         """
         Assigns a definitive TokenType to each token, taking into consideration the position of each token and the
         order of the tokens (name first or surname first). Stores the final TokenType into the tktype property of
@@ -190,7 +190,7 @@ class NameSplitter:
                     else TokenType.SURNAME
         return None
 
-    def split_name(self):
+    def split_name(self) -> Optional[Mapping[str, str]]:
         """
         Once the tokens have been assigned definitive TokenType, and an order has been infered or given, groups
         the tokens into first name, first surname, and second surname. Stores the grouped tokens as strings in-
@@ -198,8 +198,8 @@ class NameSplitter:
         :return:  A dictionary of strings, detailing the name, first_surname and last_surname values.  Or
         None if the script fails.
         """
-        types = [t.tktype for t in self.tokens]
-        length = len(self.tokens)
+        types: List[TokenType] = [t.tktype for t in self.tokens]
+        length: int = len(self.tokens)
         if length < 2:
             print("Token list [{}] is empty or too short. Ensure full name was initialized and use get_tokens() first.".
                   format(", ".join([x.value for x in self.tokens])))
