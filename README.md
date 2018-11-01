@@ -25,7 +25,7 @@ Since full names are frequently written in two different forms:
 * Name first (i.e. Luis Lopez Perez)
 * Surname first (i.e. Lopez Perez Luis)
 
-A optional switches **-on** is used to force a 'Name First' form, and or **-os** is used to force a 'Surname First' form. If neither is specified, the script will use logic to determine the most likely form for each provided full  name.
+A optional switches *-on* is used to force a 'Name First' form, and or *-os* is used to force a 'Surname First' form. If neither is specified, the script will use logic to determine the most likely form for each provided full  name.
 
 It is also possible to provide a list of names through *stdin*, by the following command:
 
@@ -52,18 +52,14 @@ Which prints out a python dictionary in the form `{name: 'Luis', first_surname: 
 If the script fails to split a name, it will return None.
 
 #### 3. As Imported Classes
-You may also import the script as a module, typically using `import SeparateNames`, in which case you will gain full access to the **NameSplitter** and **NameToken** classes.
+You may also import the script as a module, typically using `import SeparateNames`, in which case you will gain full access to the *NameSplitter* and *NameToken* classes.
 
 Please read the DocString documentation for more details. 
 
-Licensing
+Important Notice on DataSets and Dictionaries
 -
-This project is developed and provided under MIT License:
+The script uses name and surname dictionaries in order to identify and separate name. These dictionaries were obtained from publicly available datasets provided by the *U.S. Social Security (SSA)* and the *U.S. and the U.S. Census Bureau (USCENSUS)*. These datasets are not included in the License, and are subject to the policies, licenses and/or terms and conditions of their respective agencies. Please do review the terms and conditions in their respective websites:
 
-Copyright 2018 by github.com/javiersn
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  https://www.ssa.gov/oact/babynames/limits.html
+  
+  https://www.census.gov/data/developers/data-sets/surnames.html
