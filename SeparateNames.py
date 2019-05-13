@@ -237,9 +237,13 @@ def split_name(fullname: str, order: int = None):
     """
     ns = NameSplitter(fullname, Order(order) if order is not None else None)
     ns.get_tokens()
-    ns.guess_order()
-    ns.adjust_tokens()
-    return ns.split_name()
+    if len(ns.tokens) > 1:
+        ns.guess_order()
+        ns.adjust_tokens()
+        return ns.split_name()
+    else:
+        print("Tokens [{}] are too few to sort.".format(", ".join([x.value for x in ns.tokens])))
+        return None
 
 
 if __name__ == '__main__':
