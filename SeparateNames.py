@@ -46,9 +46,9 @@ class NameToken:
         if unidecode(self.value.upper()) in prefix_ds:
             self.is_prefix = True
         if unidecode(self.value.upper()) in name_ds.index:
-            self.name_prob = name_ds.loc[unidecode(self.value.upper()), 'scaled']
+            self.name_prob = name_ds.loc[unidecode(self.value.upper()), 'scaled'].max() # max() is used in case the data set has duplicates
         if unidecode(self.value.upper()) in surname_ds.index:
-            self.surname_prob = surname_ds.loc[unidecode(self.value.upper()), 'scaled']
+            self.surname_prob = surname_ds.loc[unidecode(self.value.upper()), 'scaled'].max() # max() is used in case the data set has duplicates
         if self.name_prob > self.surname_prob:
             self.tktype = TokenType.LIKE_NAME
         elif self.surname_prob > self.name_prob:
@@ -125,8 +125,8 @@ class NameSplitter:
     def guess_order(self) -> Optional[Order]:
         """
         If an order wasn't previously assigned, deduces the most likely form or order of the full name (i.e.: 'name
-        first' or 'surname first') and stores the enfered order into the order property.
-        :return: the infered order as a value of the Order Enum (UK for unknown, NS for name first, and SN for sur-
+        first' or 'surname first') and stores the inferred order into the order property.
+        :return: the inferred order as a value of the Order Enum (UK for unknown, NS for name first, and SN for sur-
         name first).
         """
         if self.order is None or self.order == Order.UK:
@@ -154,6 +154,7 @@ class NameSplitter:
         each token.
         :return:  None
         """
+        factor = 5  # the factor used to give preference when a token is ambiguous by itself but likely by position
         if self.order is None or self.order == Order.UK:
             self.guess_order()
         length = len(self.tokens)
@@ -164,33 +165,58 @@ class NameSplitter:
         if self.order == Order.NS:
             self.tokens[0].tktype = TokenType.NAME
             self.tokens[length-1].tktype = TokenType.SURNAME
-            if length > 2:
-                self.tokens[length-2].tktype = TokenType.NAME \
-                    if self.tokens[length-2].name_prob > self.tokens[length-2].surname_prob * 2 \
+            if length == 3:
+                self.tokens[1].tktype = TokenType.NAME \
+                    if self.tokens[1].name_prob > self.tokens[1].surname_prob * factor \
                     else TokenType.SURNAME
-                if length > 3:
-                    self.tokens[1].tktype = TokenType.SURNAME \
-                        if self.tokens[1].surname_prob > self.tokens[1].name_prob * 2 \
-                        else TokenType.NAME
+            if length == 4:
+                self.tokens[1].tktype = TokenType.SURNAME \
+                    if self.tokens[1].surname_prob > self.tokens[1].name_prob * factor \
+                    else TokenType.NAME
+                self.tokens[2].tktype = TokenType.NAME \
+                    if self.tokens[2].name_prob > self.tokens[2].surname_prob * factor \
+                    else TokenType.SURNAME
+            if length > 4:
+                self.tokens[1].tktype = TokenType.SURNAME \
+                    if self.tokens[1].surname_prob > self.tokens[1].name_prob * factor \
+                    else TokenType.NAME
+                self.tokens[length-2].tktype = TokenType.NAME \
+                    if self.tokens[length-2].name_prob > self.tokens[length-2].surname_prob * factor \
+                    else TokenType.SURNAME
+                current_guess = TokenType.NAME
+                for i in range(2, length-2):
+                    if current_guess == TokenType.NAME and self.tokens[i].name_prob < self.tokens[i].surname_prob:
+                        current_guess = TokenType.SURNAME
+                    self.tokens[i].tktype = current_guess
         elif self.order == Order.SN:
             self.tokens[0].tktype = TokenType.SURNAME
             self.tokens[length-1].tktype = TokenType.NAME
-            if length > 2:
+            if length == 3:
                 self.tokens[1].tktype = TokenType.NAME \
-                    if self.tokens[1].name_prob > self.tokens[1].surname_prob * 2 \
+                    if self.tokens[1].name_prob > self.tokens[1].surname_prob * factor \
                     else TokenType.SURNAME
-                if length > 3:
-                    self.tokens[length-2].tktype = TokenType.SURNAME \
-                        if self.tokens[length-2].surname_prob > self.tokens[length-2].name_prob * 2 \
-                        else TokenType.NAME
-        if length > 4:
-            for i in range(2, length-2):
-                self.tokens[i].tktype = TokenType.NAME \
-                    if self.tokens[i].name_prob > self.tokens[i].surname_prob * 3/2 \
+            if length == 4:
+                self.tokens[1].tktype = TokenType.NAME \
+                    if self.tokens[1].name_prob > self.tokens[1].surname_prob * factor \
                     else TokenType.SURNAME
+                self.tokens[2].tktype = TokenType.SURNAME \
+                    if self.tokens[2].surname_prob > self.tokens[2].name_prob * factor \
+                    else TokenType.NAME
+            if length > 4:
+                self.tokens[1].tktype = TokenType.NAME \
+                    if self.tokens[1].name_prob > self.tokens[1].surname_prob * factor \
+                    else TokenType.SURNAME
+                self.tokens[length-2].tktype = TokenType.SURNAME \
+                    if self.tokens[length-2].surname_prob > self.tokens[length-2].name_prob * factor \
+                    else TokenType.NAME
+                current_guess = TokenType.SURNAME
+                for i in range(2, length-2):
+                    if current_guess == TokenType.SURNAME and self.tokens[i].surname_prob < self.tokens[i].name_prob:
+                        current_guess = TokenType.NAME
+                    self.tokens[i].tktype = current_guess
         return None
 
-    def split_name(self) -> Optional[Mapping[str, str]]:
+    def split_name(self) -> Optional[List[str]]:
         """
         Once the tokens have been assigned definitive TokenType, and an order has been infered or given, groups
         the tokens into first name, first surname, and second surname. Stores the grouped tokens as strings in-
@@ -222,7 +248,7 @@ class NameSplitter:
             switch2 = int(switch / 2) if switch > 1 else switch
             self.first_surname = " ".join([t.value for t in self.tokens[0:switch2]])
             self.second_surname = " ".join([t.value for t in self.tokens[switch2:switch]])
-        return {'name': self.name, 'first_surname': self.first_surname, 'last_surname': self.second_surname}
+        return [self.name, self.first_surname, self.second_surname]
 
 
 def split_name(fullname: str, order: int = None):
@@ -281,3 +307,10 @@ if __name__ == '__main__':
     IMPORTANT NOTICE: the script uses name and surname dictionaries in order to identify and separate
     name. These dictionaries were obtained from publicly available datasets provided by the U.S. So--
     cial Security (SSA) and the U.S. and the U.S. Census Bureau (USCENSUS).""")
+
+        '''
+        with open("./Data/PrivateSample2.txt") as f:  # Added for debugging purposes, ignore block of code.
+            for l in f:
+                if len(l) > 0:
+                    print(split_name(l, force_order))
+        '''

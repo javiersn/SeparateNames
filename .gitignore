@@ -2,3 +2,4 @@
 .DS_Store
 *.ipynbvenv/
 venv/
+PrivateSample*

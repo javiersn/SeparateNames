@@ -31,15 +31,18 @@ class TestSplitName(TestCase):  # TODO: still need to add test cases for all cla
         ['Jorge Sánchez Fernández de la Huerta Herrera', 'Jorge', 'Sánchez Fernández', 'de la Huerta Herrera', None],
         ['Jorge Sánchez Fernández de la Huerta Herrera', 'Jorge', 'Sánchez Fernández', 'de la Huerta Herrera', 1],
         ['Jorge Sánchez Fernández de la Huerta Herrera', 'Jorge', 'Sánchez Fernández', 'de la Huerta Herrera', 0],
-        ['Jorge Sánchez Fernández de la Huerta Herrera', 'Herrera', 'Jorge Sánchez', 'Fernández de la Huerta', -1]
+        ['Jorge Sánchez Fernández de la Huerta Herrera', 'Herrera', 'Jorge Sánchez', 'Fernández de la Huerta', -1],
+        ['Luis Carlos Estrella Lopez', 'Luis Carlos', 'Estrella', 'Lopez', None],
+        ['Luis Carlos Estrella Lopez', 'Luis Carlos', 'Estrella', 'Lopez', 1],
+        ['Luis Carlos Estrella Lopez', 'Luis Carlos', 'Estrella', 'Lopez', 0]
     ]
 
     def test_split_name(self):
         for c in self.test_cases:
             if c[4] is None:
-                TestCase.assertEqual(self, split_name(c[0]), {'name': c[1], 'first_surname': c[2], 'last_surname': c[3]})
+                TestCase.assertEqual(self, split_name(c[0]), c[1:4])
             else:
-                TestCase.assertEqual(self, split_name(c[0], c[4]), {'name': c[1], 'first_surname': c[2], 'last_surname': c[3]})
+                TestCase.assertEqual(self, split_name(c[0], c[4]), c[1:4])
 
     def test_split_name_corto(self):
         TestCase.assertEqual(self, split_name('Pepe'), None)
